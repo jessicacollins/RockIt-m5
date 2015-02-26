@@ -11,8 +11,8 @@ This is all items
 	</tr>
 		@foreach ($items as $item)
 	    	<tr>
-	    		<td>{{$items->name}}</td>
-	    		<td>{{$items->price}}</td>
+	    		<td>{{$item->name}}</td>
+	    		<td>{{$item->price}}</td>
 	    	</tr>
 		@endforeach
 </table>
