@@ -9,14 +9,16 @@ This is a customer detail page
 		<td>Item</td>
 		<td>Cost</td>
 		<td>Subtotal</td>
+		<td>Delete</td>
 	</tr>
-	@foreach ($invoice as $invoice)
+	@foreach ($invoiceItems as $item)
 	<tr>
 
-		<td>{{$invoice->qty}}</td>
-		<td>{{$invoice->name}}</td>
-		<td>{{$invoice->price}}</td>
-		<td>{{$invoice->subtotal}}</td>
+		<td>{{$item->qty}}</td>
+		<td>{{$item->name}}</td>
+		<td>{{$item->price}}</td>
+		<td>{{$item->subtotal}}</td>
+		<td><a href="/invoice/{{$item->id}},{{$invoice_id}}/removeItem">Remove</a></td>
 	</tr>
 	@endforeach
 	<tr>
@@ -26,4 +28,32 @@ This is a customer detail page
 		<td>{{$total}}</td>
 	</tr>
 </table>
+
+<form action="/invoice/{{$invoice_id}}/addItem/" method="POST">
+	<input type="hidden" name="_token" value="{{csrf_token()}}">
+	<table>
+		<tr>
+			<td>Qty</td>
+			<td>Item</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="text" name="qty">
+			</td>
+			<td>
+				<select name="item_id">
+					<option value="" selected>Choose</option>
+					@foreach($items as $item)
+						<option value="{{$item->id}}">{{$item->name}}</option>
+					@endforeach
+				</select>
+			</td>
+			<td>
+				<button type="submit" class="add">Add</button>
+			</td>
+		</tr>
+	</table>
+	
+
+</form>
 @endsection
