@@ -11,10 +11,10 @@ This is all invoices
 	</tr>
 		@foreach ($invoice as $invoice)
 	    	<tr>
-	    		<td>{{$invoice->invoice_id}}</td>
+	    		<td>{{$invoice->id}}</td>
 	    		<td>{{$invoice->first_name}} {{$invoice->last_name}}</td>
 	    		<td>{{$invoice->subtotal}}</td>
-	    		<td><a href="/invoice/{{$invoice->invoice_id}}">Details</a></td>
+	    		<td><a href="/invoice/{{$invoice->id}}">Details</a></td>
 	    	</tr>
 		@endforeach
 </table>

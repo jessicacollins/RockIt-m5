@@ -8,12 +8,12 @@ class InvoiceController extends Controller {
 
 	public function all() {
 		$invoice = DB::select("
-			SELECT invoice_id, first_name, last_name, item_id, SUM(quantity*price) as 'subtotal'
+			SELECT invoice.id as 'id', first_name, last_name, item_id, SUM(quantity*price) as 'subtotal'
 			FROM customer
 			JOIN invoice ON (customer.id = invoice.customer_id)
 			JOIN invoice_item ON (invoice.id = invoice_item.invoice_id)
 			JOIN item ON (invoice_item.item_id = item.id)
-			group by invoice_id;
+			group by id;
 			");
 		
 		return view("allInvoices", ["invoice"=>$invoice]);
@@ -60,13 +60,29 @@ class InvoiceController extends Controller {
 		$qty = Request::input('qty');
 		$item_id = Request::input('item_id');
 
-		echo $invoice_id;
 
-		$addInvoiceItemSql = DB::insert("
-			INSERT INTO invoice_item (quantity, item_id, invoice_id) 
-			VALUES (:qty, :item_id, :invoice_id)",
-			[":invoice_id"=>$invoice_id, ":item_id"=>$item_id, ":qty"=>$qty]
+		$results = DB::selectOne("
+			SELECT * from invoice_item where invoice_id = :invoice_id AND item_id = :item_id
+			",
+			[":invoice_id"=>$invoice_id, ":item_id"=>$item_id]	
 			);
+
+		if ($results) {
+			$invoice_item_id = $results->id;
+			$updateSql = DB::update( "
+				UPDATE invoice_item 
+				SET quantity = :qty
+				WHERE id = :id
+				",
+				[":qty"=>$qty, ":id"=>$invoice_item_id]
+				);
+		} else {
+			$addInvoiceItemSql = DB::insert("
+				INSERT INTO invoice_item (quantity, item_id, invoice_id) 
+				VALUES (:qty, :item_id, :invoice_id)",
+				[":invoice_id"=>$invoice_id, ":item_id"=>$item_id, ":qty"=>$qty]
+			);
+		}
 
 		// return redirect("invoice/" . $invoice_id);	
 		return redirect()->back()->withInput(['id', $invoice_id]);
